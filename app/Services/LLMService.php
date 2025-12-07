@@ -16,17 +16,19 @@ class LLMService
     // For stability with the paid key, we can use 'google/gemini-flash-1.5' or 'openai/gpt-3.5-turbo' etc.
     // List of models to try in order of preference/reliability
     private $models = [
+        'cognitivecomputations/dolphin-mistral-24b-venice-edition:free', // User preferred free model
         'google/gemini-1.5-flash',
-        'google/gemini-flash-1.5', // Try both naming conventions just in case
+        'google/gemini-flash-1.5',
         'meta-llama/llama-3-8b-instruct:free',
-        'openai/gpt-3.5-turbo', // Fallback if user has credits
     ];
 
     public function __construct()
     {
         // Use the OPENROUTER_API_KEY from env
         $this->apiKey = $_ENV['OPENROUTER_API_KEY'] ?? '';
-        $this->client = new Client();
+        $this->client = new Client([
+            'timeout'  => 60, // Increase timeout for AI models
+        ]);
     }
 
     /**
@@ -58,7 +60,7 @@ class LLMService
         Do not include markdown formatting (like ```json). Just the raw JSON string.";
 
         try {
-            $lastException = null;
+            $errors = [];
 
             foreach ($this->models as $model) {
                 try {
@@ -87,14 +89,14 @@ class LLMService
                     break;
 
                 } catch (\Exception $e) {
-                    $lastException = $e;
+                    $errors[] = "$model: " . $e->getMessage();
                     // Continue to next model
                     continue;
                 }
             }
 
             if (!isset($generatedText)) {
-                throw $lastException ?? new \Exception("All models failed.");
+                throw new \Exception("All models failed. Details: " . implode(" | ", $errors));
             }
 
             // Cleanup: remove Markdown code blocks
