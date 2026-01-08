@@ -7,6 +7,7 @@ This project aims to create a workflow for converting EPUB novels into structure
 *   **Input:** EPUB Novel.
 *   **Processing:** Automatic parsing, scene chunking, and AI script generation.
 *   **Human-in-the-Loop:** Strict chapter-by-chapter approval workflow.
+*   **Mobile-First UX:** Optimized for reviewing and editing scripts on mobile devices.
 *   **Output:** A new EPUB file containing *only* the approved text scripts.
 *   **Format:** Standardized Manga Script format (Page/Panel breakdown).
 
@@ -122,13 +123,20 @@ CREATE TABLE script_pages (
 
 ## 4. Workflow: Human Approval
 
-1.  **Dashboard:** User sees list of Chapters with status (e.g., "Chapter 1: Drafted", "Chapter 2: Pending").
-2.  **Review Interface:**
-    *   Clicking a "Drafted" chapter opens the **Script Editor**.
-    *   **Left Column:** Original Novel Text (for reference).
-    *   **Right Column:** Generated Manga Script (Markdown).
-    *   **Action:** User can edit the script directly.
-    *   **Controls:** `Approve Chapter`, `Regenerate`, `Save Draft`.
+1.  **Dashboard:** User sees list of Chapters with status (e.g., "Chapter 1: Drafted", "Chapter 2: Pending"). List items should be large, tappable touch targets.
+2.  **Review Interface (Mobile First):**
+    *   **Layout Strategy:**
+        *   **Mobile (Portrait):** Single column view with a **Tab/Toggle** system.
+            *   **Tab A (Script):** The editable Manga Script (Markdown). This is the default view.
+            *   **Tab B (Source):** The Original Novel Text for reference.
+            *   **Switching:** Easy-to-reach tabs or a floating toggle button.
+        *   **Tablet/Desktop (Landscape):** Automatically expands to a **Side-by-Side** view (Source Left, Script Right) when screen width allows.
+    *   **Controls (Action Bar):**
+        *   Primary actions (`Approve Chapter`, `Save Draft`) fixed to the bottom of the viewport (Sticky Footer) for easy thumb access.
+        *   Secondary actions (`Regenerate`) in a collapsible menu or less prominent position.
+    *   **Editing:**
+        *   The Script Editor area must be optimized for mobile typing (auto-capitalization, easy access to Markdown symbols).
+
 3.  **Progression:** Only `Approved` chapters are eligible for the final export.
 
 ## 5. Export (Script EPUB)
